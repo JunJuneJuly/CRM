@@ -1,0 +1,41 @@
+{
+  "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
+  "include": [
+    "src/renderer/src/env.d.ts",
+    "src/renderer/src/**/*",
+    "src/renderer/src/**/*.vue",
+    "src/preload/*.d.ts"
+  ],
+  "compilerOptions": {
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@renderer/*": [
+        "src/renderer/src/*"
+      ],
+      "@views/*": [
+        "src/renderer/src/views/*"
+      ],
+      "@router/*": [
+        "src/renderer/src/router/*"
+      ],
+      "@store/*": [
+        "src/renderer/src/store/*"
+      ],
+      "@components/*": [
+        "src/renderer/src/components/*"
+      ],
+      "@utils/*": [
+        "src/renderer/src/utils/*"
+      ],
+      "@api/*": [
+        "src/renderer/src/api/*"
+      ],
+      "@interface/*": [
+        "src/renderer/src/interface/*"
+      ],
+    }
+  }
+}
