@@ -33,15 +33,15 @@
     <div class="login_adv">
       <div class="login_adv_title">
         <h2>{{ $t('login.name') }}</h2>
-        <h4>客户关系管理系统</h4>
-        <p>让业务在线更高效，加速企业数字化升级。</p>
+        <h4>{{ $t('login.slogan') }}</h4>
+        <p>{{ $t('login.describe') }}</p>
       </div>
       <div class="login_adv_mask"></div>
       <div class="login_adv_images">
         <img src="../assets/images/data.png">
       </div>
       <div class="login_adv_bottom">
-        © 小鹿线客户管理系统 1.0.11
+        {{ $t('login.version') }}
       </div>
     </div>
     <!-- 右侧 -->
@@ -50,11 +50,11 @@
         <div class="login-header">
           <div class="login-img">
             <img src="../assets/images/logo.png">
-            <label>小鹿线客户管理系统</label>
+            <label>{{ $t('login.title') }}</label>
           </div>
         </div>
         <el-tabs>
-          <el-tab-pane label="账号登录" lazy style="height: 300px;">
+          <el-tab-pane :label="$t('login.accountLogin')" lazy style="height: 300px;">
             <passwordForm></passwordForm>
           </el-tab-pane>
           <el-tab-pane :label="$t('login.mobileLogin')" lazy style="height: 300px;">
@@ -62,7 +62,7 @@
           </el-tab-pane>
         </el-tabs>
         <template v-if="true">
-          <el-divider>其他登录方式</el-divider>
+          <el-divider>{{ $t('login.signInOther') }}</el-divider>
           <div class="login-oauth">
             <el-button type="success" circle size="large">
               <el-icon size="large">

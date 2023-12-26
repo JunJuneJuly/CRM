@@ -1,10 +1,10 @@
 <template>
   <el-form ref="ruleFormRef" :model="form" :rules="rules">
     <el-form-item prop="username">
-      <el-input v-model="form.username" :prefix-icon="User" placeholder="请输入账号" clearable />
+      <el-input v-model="form.username" :prefix-icon="User" :placeholder="$t('login.userError')" clearable />
     </el-form-item>
     <el-form-item prop="password">
-      <el-input v-model="form.password" :prefix-icon="Lock" placeholder="请输入密码" clearable />
+      <el-input v-model="form.password" :prefix-icon="Lock" :placeholder="$t('login.PWPlaceholder')" clearable />
     </el-form-item>
     <el-form-item>
       <div class="box-code">
@@ -14,27 +14,30 @@
     </el-form-item>
     <div class="rememberMe">
       <div>
-        <el-checkbox label="记住密码" />
+        <el-checkbox :label="$t('login.rememberMe')" />
       </div>
       <div>
-        <router-link to="/reset_password">忘记密码</router-link>
+        <router-link to="/reset_password">{{ $t('login.forgetPassword') }}</router-link>
       </div>
     </div>
     <el-form-item>
-      <el-button type="primary" style="width:100%" round @click="login(ruleFormRef)">登录</el-button>
+      <el-button type="primary" style="width:100%" round @click="login(ruleFormRef)" :loading="load">{{ $t('login.signIn')
+      }}</el-button>
     </el-form-item>
   </el-form>
 </template>
 <script setup lang="ts">
 import { User, Lock } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { captchaImage, uLoginByJson } from '@api/login.ts'
+import { captchaImage, uLoginByJson } from '@api/login'
+
 import { getCurrentInstance, ComponentInternalInstance, onBeforeMount, reactive, ref, } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { Encrypt } from '@utils/aes.ts'
-import { RuleForm } from '@interface/login.ts'
+import { Encrypt } from '@utils/aes'
+import { RuleForm } from '@interface/login'
 
-const { proxy } = getCurrentInstance() as ComponentInternalInstance
+
+
 const ruleFormRef = ref<FormInstance>()
 const form = reactive<RuleForm>({
   username: '',
@@ -43,36 +46,31 @@ const form = reactive<RuleForm>({
   key: ''
 })
 let captchaUrl = ref('')
-const rules = reactive<FormRules<RuleForm>>({
-  username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
-  ],
-  password: [
-    {
-      required: true,
-      message: '请输入密码',
-      trigger: 'blur',
-    },
-  ]
-})
+let rules;
+let load = ref(false)
 
+import useLogin from '@hooks/useLogin.ts'
 const login = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate(async (valid) => {
     if (valid) {
+      load.value = true
       let res = await uLoginByJson({
         username: Encrypt(form.username),
         password: Encrypt(form.password),
         captcha: form.captcha,
         key: form.key
       })
-      if (res.code != 200) {
-        console.log(res)
+      load.value = false;
+      if (res?.code !== '200') {
         return ElMessage({
           message: res.msg,
           type: 'error',
         })
       }
+
+      useLogin(res);
+
 
     } else {
       return ElMessage({
@@ -94,6 +92,19 @@ const getImage = async () => {
 }
 //生命周期
 onBeforeMount(() => {
+  const { proxy } = getCurrentInstance() as ComponentInternalInstance
+  rules = reactive<FormRules<RuleForm>>({
+    username: [
+      { required: true, message: proxy?.$t('login.userError'), trigger: 'blur' },
+    ],
+    password: [
+      {
+        required: true,
+        message: proxy?.$t('login.PWError'),
+        trigger: 'blur',
+      },
+    ]
+  })
   getImage()
 })
 </script>

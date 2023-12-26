@@ -11,7 +11,7 @@ function createWindow() {
     // titleBarStyle:'hidden',
     frame: false,
     //无边框窗口
-    resizable: false,
+    // resizable:false,
     autoHideMenuBar: true,
     ...process.platform === "linux" ? { icon } : {},
     webPreferences: {
@@ -21,6 +21,12 @@ function createWindow() {
   });
   mainWindow.on("ready-to-show", () => {
     mainWindow.show();
+  });
+  electron.ipcMain.handle("window-resize", () => {
+    mainWindow.setSize(1200, 720);
+    mainWindow.setMinimumSize(1e3, 500);
+    mainWindow.center();
+    mainWindow.setResizable(true);
   });
   electron.ipcMain.handle("custom-adsorption", (event, res) => {
     let x = res.appX;

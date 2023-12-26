@@ -23,6 +23,8 @@ export default defineConfig({
         '@utils': resolve('src/renderer/src/utils'),
         '@api': resolve('src/renderer/src/api'),
         '@interface':resolve('src/renderer/src/interface'),
+        '@hooks':resolve('src/renderer/src/hooks'),
+        '@layout':resolve('src/renderer/src/layout')
       }
     },
     plugins: [

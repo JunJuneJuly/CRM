@@ -1,23 +1,24 @@
 <template>
   <el-form ref="ruleFormRef" :model="form" :rules="rules">
     <el-form-item prop="mobile">
-      <el-input v-model="form.mobile" :prefix-icon="Iphone" placeholder="手机号码" clearable><template
-          #prepend>+86</template></el-input>
+      <el-input v-model="form.mobile" :prefix-icon="Iphone" :placeholder="$t('login.mobilePlaceholder')"
+        clearable><template #prepend>+86</template></el-input>
     </el-form-item>
     <el-form-item prop="captcha">
       <div class="phoneCode">
-        <el-input v-model="form.captcha" :prefix-icon="Unlock" placeholder="短信验证码" clearable />
-        <el-button :disabled="disabled" style="margin-left: 10px;" @click="getPhoneCode">获取验证码 <span v-if="disabled">({{
-          time
-        }})</span></el-button>
+        <el-input v-model="form.captcha" :prefix-icon="Unlock" :placeholder="$t('login.smsPlaceholder')" clearable />
+        <el-button :disabled="disabled" style="margin-left: 10px;" @click="getPhoneCode">{{ $t('login.smsGet') }} <span
+            v-if="disabled">({{
+              time
+            }})</span></el-button>
       </div>
     </el-form-item>
 
     <div style="margin-bottom: 10px;">
-      <router-link to="" class="missPwd">忘记密码?</router-link>
+      <router-link to="" class="missPwd">{{ $t('login.forgetPassword') }}</router-link>
     </div>
     <el-form-item>
-      <el-button type="primary" style="width:100%" round @click="login(ruleFormRef)">登录</el-button>
+      <el-button type="primary" style="width:100%" round @click="login(ruleFormRef)">{{ $t('login.signIn') }}</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -25,9 +26,11 @@
 import { Iphone, Unlock } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { loginByMobile, getPhoneCaptcha } from '@api/login.ts'
-import { reactive, ref } from 'vue'
+import { reactive, ref, getCurrentInstance, ComponentInternalInstance } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { Encrypt } from '@utils/aes.ts'
+
+const { proxy } = getCurrentInstance() as ComponentInternalInstance
 interface phoneRuleForm {
   mobile: string
   captcha: string
@@ -43,12 +46,12 @@ const form = reactive<phoneRuleForm>({
 
 const validatePhone = (rule: any, value: any, callback: any) => {
   if (value === '') {
-    callback(new Error('请输入手机号码'))
+    callback(new Error(proxy?.$t('login.mobileError')))
   } else {
     if (/^[1][3,4,5,6.7,8,9][0-9]{9}$/.test(value)) {
       callback()
     } else {
-      callback(new Error('请输入正确的手机号码'))
+      callback(new Error(proxy?.$t('login.mobileFormat')))
     }
 
   }
@@ -58,12 +61,14 @@ const rules = reactive<FormRules<phoneRuleForm>>({
   captcha: [
     {
       required: true,
-      message: '请输入密码',
+      // message:proxy?.$t('login.mobileFormat'),
+      message: '请输入验证码',
       trigger: 'blur',
     },
   ]
 })
 
+import useLogin from '@hooks/useLogin.ts'
 const login = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate(async (valid) => {
@@ -72,14 +77,13 @@ const login = async (formEl: FormInstance | undefined) => {
         mobile: Encrypt(form.mobile),
         captcha: Encrypt(form.captcha)
       })
-      if (res.code != 200) {
-        console.log(res)
+      if (res.code != '200') {
         return ElMessage({
           message: res.msg,
           type: 'error',
         })
       } else {
-
+        useLogin(res);
       }
 
     }
@@ -101,7 +105,7 @@ const getPhoneCode = async () => {
   let res = await getPhoneCaptcha({
     mobile: Encrypt(form.mobile)
   })
-  if (res.code != 200) {
+  if (res.code != '200') {
     return ElMessage.warning(res.msg)
   }
 }

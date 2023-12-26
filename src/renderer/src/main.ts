@@ -5,7 +5,7 @@ import { createPinia } from 'pinia'
 import piniaPluginPersist from 'pinia-plugin-persist'
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/src/dark/css-vars.scss'
-import i18n from './local'
+import i18n from './local/index'
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
@@ -17,4 +17,4 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 const store = createPinia()
 store.use(piniaPluginPersist)
 
-app.use(i18n).use(router).use(store).mount('#app')
+app.use(router).use(store).use(i18n).mount('#app')

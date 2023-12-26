@@ -11,7 +11,7 @@ function createWindow(): void {
     show: false,
     // titleBarStyle:'hidden',
     frame: false,//无边框窗口
-    resizable:false,
+    // resizable:false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -22,6 +22,14 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+  })
+
+  //登录页跳转到首页, 进行窗口设置
+  ipcMain.handle('window-resize',()=>{
+    mainWindow.setSize(1200,720);//设置窗口大小
+    mainWindow.setMinimumSize(1000,500);//设置窗口最小值
+    mainWindow.center();//窗口居中
+    mainWindow.setResizable(true);//窗口可调节大小
   })
 
   //接收窗口拖拽事件：

@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia'
+import {useUserStore} from './useUserStore.ts'
 
 export const useStore = defineStore('storeId', {
   state: () => {
     return {
-      counter: 0,
+      user:useUserStore()
     }
   },
   getters: {},
@@ -13,7 +14,7 @@ export const useStore = defineStore('storeId', {
     strategies: [
       {
         storage: localStorage,//表示存储在localStorage
-        paths:['counter']
+        paths:[]
       }
     ]
   }
