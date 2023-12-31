@@ -43,7 +43,7 @@
         </div>
         <!-- 右间 内容区域-->
         <div class="aminui-body el-container">
-            <router-view></router-view>
+            <router-view />
         </div>
     </section>
 </template>

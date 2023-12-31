@@ -3,7 +3,7 @@
     没有子菜单
   </div>
   <template v-for="(item, index) in subMenu" :key="index">
-    <el-menu-item :index="index" :route="item.path">
+    <el-menu-item :index="item.path">
       <el-icon>
         <component :is="item.meta?.icon.replace('el-icon-','') || 'user'">
         </component>
