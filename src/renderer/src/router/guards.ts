@@ -1,7 +1,10 @@
 import {useMenuStore} from '@store/useMenuStore'
 import router from '@router'
+import clone from 'rfdc'
+import {Parent} from '@interface/user'
 
-export const beforeEach = (to,from,next)=>{
+export const beforeEach = (to:any,from,next)=>{
+  console.log(to)
   if(to.path === '/login'){
     next()
     return
@@ -15,30 +18,49 @@ export const beforeEach = (to,from,next)=>{
   }
   //动态添加路由
   initRouter()
+  //当前路由没有匹配到任何路由记录
+  if(to.matched.length == 0){
+    router.push(to.fullPath)
+    return
+  }
   next()
   return
+}
+
+interface Child {
+  parentView: string;
+  path: string;
+  name: string;
+  meta: any;
+  redirect: string;
+  children?: Child[] | null;
+  component: any;
+  id?: string | undefined;
+  hidden?: boolean | undefined;
+  alwaysShow?: boolean | undefined;
+  query?: string | undefined;
 }
 
 //1.动态添加路由
 const initRouter = () => {
   //该用户可获取路由
-  let menu = useMenuStore().menu;
+  let menu:Parent[] = useMenuStore().menu;
   //重新整理路由信息
-  let menuRouter = filterRouter(menu)
+  let menuRouter:Child[] = filterRouter(menu)
   let routes = flatRoutes(menuRouter)
-  routes.forEach((item)=>{
+  routes.forEach((item:any)=>{
     router.addRoute(item.parentView == 'layout' ? 'layout':'',item)
   })
-  console.log(router)
 }
 
+
 //2.整理路由信息 .charAt(0) == '/' ? menu.path : `/${menu.path}`,
-const filterRouter = (menuList) => {
-  let resRouter = []
-  menuList.forEach((menu)=>{
-    let item = {
+const filterRouter = (menuList:Parent[]):Child[] => {
+  let resRouter:Child[] = []
+  menuList.forEach((menu:any)=>{
+    let item : Child = {
       parentView: menu.parentView,
-      path: menu.path,
+      path: menu.path.charAt(0) == '/' ? menu.path : `/${menu.path}`,
       name: menu.name,
       meta: menu.meta,
       redirect: menu.redirect,
@@ -65,7 +87,7 @@ Object.keys(modules).forEach((key)=>{
   }
   components[componentName] = modules[key]
 })
-const loadComponent = (component)=>{
+const loadComponent = (component:string|null):(()=>Promise<any>) | undefined =>{
   if(component){
     return components[component]
   }
@@ -75,20 +97,21 @@ const loadComponent = (component)=>{
 //路由扁平化
 const flatRoutes = (routes,breadcrumb=[]) => {
   let resRoutes = []
-  routes.forEach((route)=>{
+  const cloneRoutes = clone()(routes)
+  cloneRoutes.forEach((route)=>{
+    // debugger;
     if(route.children){
       let childBreadcrumb = [...breadcrumb]
       childBreadcrumb.push(route);
       //删除路由的children属性，并存入resRoutes
       let tempRoute = {...route}
+      tempRoute.meta.children = childBreadcrumb;
       delete tempRoute.children
       resRoutes.push(tempRoute)
       let childrenRoutes = flatRoutes(route.children,childBreadcrumb)
       childrenRoutes.map((item)=>{
         resRoutes.push(item)
       })
-
-      
     }else{
       let tmpBreadcrumb = [...breadcrumb]
       route.meta.breadcrumb = tmpBreadcrumb
@@ -97,8 +120,4 @@ const flatRoutes = (routes,breadcrumb=[]) => {
     }
   })
   return resRoutes
-}
-
-export const fu = () => {
-  console.log('11')
 }

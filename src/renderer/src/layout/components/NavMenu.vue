@@ -8,7 +8,7 @@
         <component :is="item.meta?.icon.replace('el-icon-','') || 'user'">
         </component>
       </el-icon>
-      <p>{{ item.name }}</p>
+      <template #title><span>{{ item.name }}</span></template>
     </el-menu-item>
   </template>
 </template>

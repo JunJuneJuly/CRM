@@ -24,25 +24,29 @@
             </div>
         </div>
         <!-- 中间 二级菜单-->
-        <div class="aminui-side">
-            <div class="aminui-side-top">
+        <div :class="menuIsCollapse ? 'aminui-side isCollapse' : 'aminui-side'">
+            <div class="aminui-side-top" v-if="!menuIsCollapse">
                 <h2>首页</h2>
             </div>
             <div class="aminui-side-scroll">
                 <el-scrollbar>
-                    <el-menu router default-active="1">
+                    <el-menu router :default-active="route.path" :collapse="menuIsCollapse">
                         <NavMenu :subMenu="subMenu"></NavMenu>
                     </el-menu>
                 </el-scrollbar>
             </div>
-            <div class="aminui-side-bottom">
+            <div class="aminui-side-bottom" @click="toggle_menuIsCollapse">
                 <el-icon>
-                    <Expand />
+                    <Expand v-if="!menuIsCollapse" />
+                    <Fold v-else />
                 </el-icon>
             </div>
         </div>
         <!-- 右间 内容区域-->
-        <div class="aminui-body el-container">
+        <div class="aminui-body">
+            <TopBar>
+                <UserBar />
+            </TopBar>
             <router-view />
         </div>
     </section>
@@ -51,11 +55,15 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { useMenuStore } from '@store/useMenuStore'
-import NavMenu from './components/NavMenu.vue'
+import NavMenu from './components/NavMenu.vue';
+import TopBar from './components/TopBar.vue'
+import UserBar from './components/UserBar.vue'
+import { useRoute } from 'vue-router'
 
 const menu = ref([])
 const pmenu = ref({})
 const subMenu = ref([])
+const route = useRoute();
 onBeforeMount(() => {
     // electron.ipcRenderer.invoke('window-resize');
     menu.value = useMenuStore().menu;
@@ -65,6 +73,12 @@ onBeforeMount(() => {
 const tabMenu = (item) => {
     pmenu.value = item
     subMenu.value = item.children
+}
+
+//展开收起菜单
+const menuIsCollapse = ref<boolean>(false)
+const toggle_menuIsCollapse = () => {
+    menuIsCollapse.value = !menuIsCollapse.value
 }
 </script>
 
@@ -145,6 +159,7 @@ const tabMenu = (item) => {
                 }
             }
         }
+
     }
 
     //中间：二级菜单
@@ -193,6 +208,10 @@ const tabMenu = (item) => {
         .aminui-side-bottom:hover {
             color: var(--el-color-primary);
         }
+    }
+
+    .isCollapse {
+        width: 65px;
     }
 
     //右边：内容区域
