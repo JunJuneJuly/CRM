@@ -14,7 +14,7 @@
     </el-form-item>
     <div class="rememberMe">
       <div>
-        <el-checkbox :label="$t('login.rememberMe')" />
+        <el-checkbox :label="$t('login.rememberMe')" v-model="memoPassWord" @change="onMemoPassWord" />
       </div>
       <div>
         <router-link to="/reset_password">{{ $t('login.forgetPassword') }}</router-link>
@@ -31,9 +31,9 @@ import { User, Lock } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { captchaImage, uLoginByJson } from '@api/login'
 
-import { getCurrentInstance, ComponentInternalInstance, onBeforeMount, reactive, ref, } from 'vue'
+import { getCurrentInstance, ComponentInternalInstance, onBeforeMount, reactive, ref, Ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { Encrypt } from '@utils/aes'
+import { Encrypt, Decrypt } from '@utils/aes'
 import { RuleForm } from '@interface/login'
 
 
@@ -70,7 +70,8 @@ const login = async (formEl: FormInstance | undefined) => {
       }
 
       useLogin(res);
-
+      //记住密码
+      setPassWord()
 
     } else {
       return ElMessage({
@@ -92,6 +93,16 @@ const getImage = async () => {
 }
 //生命周期
 onBeforeMount(() => {
+  //根据 ，判断是否记住密码
+  let userPwd: string | null = localStorage.getItem('user-pwd')
+  let isMemory: boolean | null = JSON.parse(localStorage.getItem('memoPassWord'))
+  console.log(userPwd, isMemory)
+  if (userPwd && isMemory) {
+
+    const { username, password } = JSON.parse(userPwd)
+    form.username = Decrypt(username)
+    form.password = Decrypt(password)
+  }
   const { proxy } = getCurrentInstance() as ComponentInternalInstance
   rules = reactive<FormRules<RuleForm>>({
     username: [
@@ -106,7 +117,25 @@ onBeforeMount(() => {
     ]
   })
   getImage()
+
 })
+
+//记住密码
+import useMemoPassWord from '@hooks/useMemoPassWord.ts'
+const { memoVal, onMemoPassWord } = useMemoPassWord()
+const memoPassWord: Ref<boolean> = ref(memoVal)
+const setPassWord = () => {
+  console.log(memoPassWord.value)
+  if (memoPassWord.value) {
+    //存储
+    localStorage.setItem('user-pwd', JSON.stringify({
+      username: Encrypt(form.username),
+      password: Encrypt(form.password),
+    }))
+  } else {
+    localStorage.removeItem('user-pwd')
+  }
+}
 </script>
 <style lang="scss" scoped>
 .box-code {

@@ -40,6 +40,24 @@ function createWindow() {
     electron.shell.openExternal(details.url);
     return { action: "deny" };
   });
+  electron.ipcMain.handle("out-login", () => {
+    mainWindow.setSize(900, 670);
+    mainWindow.center();
+    mainWindow.setResizable(false);
+  });
+  electron.ipcMain.handle("win-close", () => {
+    electron.app.exit();
+  });
+  electron.ipcMain.handle("win-min", () => {
+    mainWindow.minimize();
+  });
+  electron.ipcMain.handle("win-max", () => {
+    if (mainWindow.isFullScreen()) {
+      mainWindow.setFullScreen(false);
+    } else {
+      mainWindow.setFullScreen(true);
+    }
+  });
   if (utils.is.dev && process.env["ELECTRON_RENDERER_URL"]) {
     mainWindow.loadURL(process.env["ELECTRON_RENDERER_URL"]);
   } else {

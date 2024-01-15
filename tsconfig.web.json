@@ -36,6 +36,9 @@
       "@interface/*": [
         "src/renderer/src/interface/*"
       ],
+      "@mixins/*": [
+        "src/renderer/src/mixins/*"
+      ],
     }
   }
 }

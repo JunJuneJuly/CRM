@@ -14,7 +14,10 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 
+import useDicts from '@mixins/DIctsPlugin.ts'
 const store = createPinia()
 store.use(piniaPluginPersist)
-
+app.use(useDicts)
+import pagination from '@components/pagination/index.vue'
+app.component('pagination', pagination); 
 app.use(router).use(store).use(i18n).mount('#app')

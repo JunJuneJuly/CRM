@@ -3,14 +3,14 @@
     <!-- 退出登录 -->
     <el-dropdown class="panel-item">
       <div class="user-avatar">
-        <el-avatar :size="30" />
+        <el-avatar :size="30" :src="userInfo.avatar" />
         <el-icon class="el-icon--right">
           <arrow-down />
         </el-icon>
       </div>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item>退出登录</el-dropdown-item>
+          <el-dropdown-item @click="outLogin">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -27,19 +27,19 @@
       </el-icon>
     </div>
     <!-- 缩小 -->
-    <div class="panel-item">
+    <div class="panel-item" @click="minWin">
       <el-icon>
         <Minus />
       </el-icon>
     </div>
     <!-- 放大 -->
-    <div class="panel-item">
+    <div class="panel-item" @click="maxWin">
       <el-icon>
         <FullScreen />
       </el-icon>
     </div>
     <!--关闭-->
-    <div class="panel-item">
+    <div class="panel-item" @click="winClose">
       <el-icon>
         <Close />
       </el-icon>
@@ -48,7 +48,72 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { useUserStore } from '@store/useUserStore'
+const store = useUserStore()
+import { storeToRefs } from 'pinia'
+const { userInfo } = storeToRefs(store)
 
+//退出登录
+import { useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
+const router = useRouter()
+const outLogin = () => {
+  ElMessageBox.confirm(
+    '是否退出登录?',
+    '确认',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(() => {
+      ElMessage({
+        type: 'success',
+        message: '退出成功',
+      })
+      localStorage.setItem('TOKEN', '');
+      router.replace({
+        path: '/'
+      })
+      electron.ipcRenderer.invoke('out-login');
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消退出',
+      })
+    })
+}
+//退出软件
+const winClose = () => {
+  ElMessageBox.confirm(
+    '是否退出登录?',
+    '确认',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(() => {
+      electron.ipcRenderer.invoke('win-close');
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消退出',
+      })
+    })
+}
+//最小化
+const minWin = () => {
+  electron.ipcRenderer.invoke('win-min');
+}
+//最大化
+const maxWin = () => {
+  electron.ipcRenderer.invoke('win-max');
+}
 </script>
 <style lang="scss" scoped>
 .user-bar {

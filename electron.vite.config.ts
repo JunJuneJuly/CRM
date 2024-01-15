@@ -24,7 +24,8 @@ export default defineConfig({
         '@api': resolve('src/renderer/src/api'),
         '@interface':resolve('src/renderer/src/interface'),
         '@hooks':resolve('src/renderer/src/hooks'),
-        '@layout':resolve('src/renderer/src/layout')
+        '@layout':resolve('src/renderer/src/layout'),
+        '@mixins':resolve('src/renderer/src/mixins')
       }
     },
     plugins: [

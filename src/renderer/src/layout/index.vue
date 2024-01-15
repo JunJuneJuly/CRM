@@ -47,7 +47,11 @@
             <TopBar>
                 <UserBar />
             </TopBar>
-            <router-view />
+            <TagBar />
+            <div class="aminui-main">
+                <router-view />
+            </div>
+
         </div>
     </section>
 </template>
@@ -58,6 +62,7 @@ import { useMenuStore } from '@store/useMenuStore'
 import NavMenu from './components/NavMenu.vue';
 import TopBar from './components/TopBar.vue'
 import UserBar from './components/UserBar.vue'
+import TagBar from './components/TagBar.vue'
 import { useRoute } from 'vue-router'
 
 const menu = ref([])
@@ -84,8 +89,8 @@ const toggle_menuIsCollapse = () => {
 
 <style lang='scss' scoped>
 .aminui-wrapper {
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     display: flex;
     overflow: hidden;
     max-height: 100vh;
@@ -217,7 +222,13 @@ const toggle_menuIsCollapse = () => {
     //右边：内容区域
     .aminui-body {
         flex: 1;
-        // background: red;
+        display: flex;
+        flex-direction: column;
+
+        .aminui-main {
+            overflow: auto;
+            flex: 1;
+        }
     }
 }
 

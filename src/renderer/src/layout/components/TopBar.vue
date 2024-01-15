@@ -62,6 +62,10 @@ console.log(route)
     -webkit-app-region: drag;
   }
 
+  .right-panel {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .el-breadcrumb {
