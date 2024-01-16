@@ -27,7 +27,7 @@
                   <el-col :span="8">
                     <el-form-item>
                       <el-button type="primary" :icon="Search" @click="getRolePage">搜索</el-button>
-                      <el-button :icon="Refresh">重置</el-button>
+                      <el-button :icon="Refresh" @click="roleReset">重置</el-button>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -36,7 +36,7 @@
             <!-- 表格 -->
             <el-card>
               <div class="toolBar">
-                <el-button type="primary" :icon="Plus">搜索</el-button>
+                <el-button type="primary" :icon="Plus" @click="btnRoleDialog">新增</el-button>
               </div>
               <el-table :data="tableData" border style="width: 100%">
                 <el-table-column type="selection" width="55" />
@@ -48,8 +48,9 @@
                 <el-table-column prop="createTime" label="创建时间" align="center" :formatter="formatter" width="220" />
                 <el-table-column label="操作" align="center" width="220" fixed="right">
                   <template #default="{ row }">
-                    <el-link type="primary" :icon="Edit" :underline="false">编辑</el-link>
-                    <el-link type="danger" :icon="Delete" style="margin: 0 8px;" :underline="false">删除</el-link>
+                    <el-link type="primary" :icon="Edit" :underline="false" @click="btnRoleDialog(row.id)">编辑</el-link>
+                    <el-link type="danger" :icon="Delete" style="margin: 0 8px;" :underline="false"
+                      @click="deleteRole(row.id)">删除</el-link>
                     <router-link class="el-link el-link--error" type="success" to="/">
                       分配用户
                     </router-link>
@@ -66,19 +67,61 @@
 
       </el-main>
     </el-container>
-
+    <roleDialog v-if="dialogVisible" v-model:dialogVisible="dialogVisible" :updateRoleId="updateRoleId" @roleChange="getRolePage"></roleDialog>
   </div>
 </template>
 <script lang="ts" setup>
 import { Search, Refresh, Plus, Edit, Delete } from '@element-plus/icons-vue'
-import { rolePage, Role } from '@api/role'
+import { rolePage, Role, roleDelete } from '@api/role'
 import { ComponentInternalInstance, getCurrentInstance, onBeforeMount, reactive, ref } from 'vue'
 import tool from '@utils/tool'
+import roleDialog from './roleDialog.vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+//删除角色
+const deleteRole = (id) => {
+  ElMessageBox.confirm(
+    '是否删除?',
+    '确认',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(async () => {
+      let result = await roleDelete(id)
+      if (result.code == '200') {
+        getRolePage();
+      }
+
+
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消删除',
+      })
+    })
+
+}
+
+
+//弹窗
+let dialogVisible = ref<boolean>(false)
+//添加/修改角色
+const updateRoleId = ref('')
+const btnRoleDialog = (id) => {
+  if(typeof id == 'string'){
+    updateRoleId.value = id
+  }else{
+    updateRoleId.value = ''
+  }
+  dialogVisible.value = true;
+}
 //表格数据
 const tableData = ref<Role[]>([])
 const totals = ref(100)
 const getRolePage = async () => {
-  console.log(ruleForm)
   let result = await rolePage(ruleForm)
   if (result.code == '200') {
     const { records, total } = result.data;
@@ -108,13 +151,22 @@ onBeforeMount(() => {
 })
 
 //搜索
-const ruleForm = reactive({
+let ruleForm = reactive({
   current: 1,
   size: 10,
   roleName: '',
   rolePerm: '',
   enabled: ''
 })
+//重置
+const roleReset = () => {
+  ruleForm.current = 1;
+  ruleForm.size = 10;
+  ruleForm.roleName = '';
+  ruleForm.rolePerm = '';
+  ruleForm.enabled = '';
+  getRolePage()
+}
 
 </script>
 <style lang="scss" scoped>
