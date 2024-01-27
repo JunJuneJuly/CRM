@@ -6,6 +6,7 @@ export default function useDicts(app:App){
   async function getDicts(params:string[]) {
     let res = await queryBetch(params)
     dicts.value = res.data
+    console.log(res.data)
   }
   app.mixin({
     data(){

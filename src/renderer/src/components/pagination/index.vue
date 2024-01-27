@@ -1,12 +1,12 @@
 <template>
   <div class="demo-pagination-block">
     <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 30, 50, 100]"
-      :disabled="disabled" layout="total, sizes, prev, pager, next, jumper" :total="totals"
-      @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+      layout="total, sizes, prev, pager, next, jumper" :total="totals" @size-change="handleSizeChange"
+      @current-change="handleCurrentChange" />
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const props = defineProps({
   totals: {
@@ -37,6 +37,14 @@ const handleCurrentChange = (value) => {
   //触发父组件
   emit('update:currentPage', value)
 }
+//监听
+watch(() => props.currentPage, (n) => {
+  currentPage.value = n
+})
+//监听
+watch(() => props.pageSize, (n) => {
+  pageSize.value = n
+}) 
 </script>
 <style lang="scss" scoped>
 .demo-pagination-block {

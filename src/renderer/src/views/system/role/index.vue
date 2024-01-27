@@ -58,7 +58,7 @@
                 </el-table-column>
               </el-table>
               <pagination @update:currentPage="handleCurrentPageUpdate" @update:pageSize="handlePageSizeUpdate"
-                :totals="totals">
+                :currentPage="Number(ruleForm.current)" :pageSize="Number(ruleForm.size)" :totals="totals">
               </pagination>
             </el-card>
           </el-tab-pane>
@@ -67,7 +67,8 @@
 
       </el-main>
     </el-container>
-    <roleDialog v-if="dialogVisible" v-model:dialogVisible="dialogVisible" :updateRoleId="updateRoleId" @roleChange="getRolePage"></roleDialog>
+    <roleDialog v-if="dialogVisible" v-model:dialogVisible="dialogVisible" :updateRoleId="updateRoleId"
+      @roleChange="getRolePage"></roleDialog>
   </div>
 </template>
 <script lang="ts" setup>
@@ -111,9 +112,9 @@ let dialogVisible = ref<boolean>(false)
 //添加/修改角色
 const updateRoleId = ref('')
 const btnRoleDialog = (id) => {
-  if(typeof id == 'string'){
+  if (typeof id == 'string') {
     updateRoleId.value = id
-  }else{
+  } else {
     updateRoleId.value = ''
   }
   dialogVisible.value = true;

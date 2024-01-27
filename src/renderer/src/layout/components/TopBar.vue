@@ -42,7 +42,7 @@ onBeforeMount(() => {
 watch(route, () => {
   getBreadcrumb()
 })
-console.log(route)
+
 </script>
 <style lang="scss" scoped>
 .topbar {

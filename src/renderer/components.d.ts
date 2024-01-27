@@ -47,6 +47,7 @@ declare module 'vue' {
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTree: typeof import('element-plus/es')['ElTree']
+    ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     NavMenu: typeof import('./src/components/home/NavMenu.vue')['default']
     Pagination: typeof import('./src/components/pagination/index.vue')['default']
     PasswordForm: typeof import('./src/components/login/passwordForm.vue')['default']

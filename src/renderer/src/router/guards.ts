@@ -4,7 +4,6 @@ import clone from 'rfdc'
 import {Parent} from '@interface/user'
 
 export const beforeEach = (to:any,from,next)=>{
-  console.log(to)
   if(to.path === '/login'){
     next()
     return
