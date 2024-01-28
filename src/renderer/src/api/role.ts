@@ -106,7 +106,49 @@ interface IRole{
   msg: string;
   data: IRoleMenuItem[];
 }
+export interface IRoleMenuItem {
+  id: string;
+  name: string;
+  parentId: string;
+  sort: number;
+  path: string;
+  query: string | null;
+  component: string;
+  cache: number;
+  type: number;
+  visible: number;
+  redirect: string;
+  enabled: number;
+  perms: string;
+  icon: string;
+  remark: string | null;
+  createBy: string | null;
+  createTime: string | null;
+  updateBy: string | null;
+  updateTime: string | null;
+  children?:IRoleMenuItem[]
+} 
+interface IRoleMenu {
+  code: string;
+  msg: string;
+  data: {
+    records: IRoleMenuItem[];
+    total: number;
+    size: number;
+    current: number;
+    orders: any[];
+    optimizeCountSql: boolean;
+    searchCount: boolean;
+    countId: null;
+    maxLimit: null;
+    pages: number;
+  };
+}
 //获取菜单权限树
-export const menuTree = ():Promise<IRole> => {
-  return http.get<IRole>('/system/menu/tree')
+export const menuTree = (data:{
+  current:string,
+  size:string,
+  enabled:string,
+}):Promise<IRoleMenu> => {
+  return http.get<IRoleMenu>('/system/menu/page',data)
 }

@@ -7,6 +7,7 @@ export const useUserStore = defineStore('useStore', {
       roles: [],
       rolePerm:'',
       userInfo:{},
+      permissions:[],
     }
   },
   getters: {},
@@ -17,6 +18,7 @@ export const useUserStore = defineStore('useStore', {
         this.roles = res.data.roles
         this.rolePerm = this.roles[0].rolePerm
         this.userInfo = res.data.userInfo
+        this.permissions = res.data.userInfo.permissions;
       }
     }
   },
@@ -25,7 +27,7 @@ export const useUserStore = defineStore('useStore', {
     strategies: [
       {
         storage: localStorage,//表示存储在localStorage
-        paths:['rolePerm','userInfo']
+        paths:['rolePerm','userInfo','permissions']
       }
     ]
   }

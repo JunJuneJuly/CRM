@@ -14,6 +14,10 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 
+//自定义指令
+import {AuthDirective} from './directives/auths.directives'
+app.directive(AuthDirective.name,AuthDirective);
+
 import useDicts from '@mixins/DIctsPlugin.ts'
 const store = createPinia()
 store.use(piniaPluginPersist)

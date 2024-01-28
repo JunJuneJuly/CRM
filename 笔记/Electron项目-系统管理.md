@@ -874,4 +874,64 @@ const deleteRole = (id) => {
   }
   ```
 
+# 八 项目的权限控制
 
+1.1 左侧菜单权限
+
+```
+1. 用户进行登录，登录成功，后端会给前端返回用户的“TOKEN”
+2. 接着请求【个人信息】接口，把token传递过去（header），获取到了用户的信息内容，其中控制左侧菜单权限的字段是：【角色权限编码】
+3. 接着请求【获取路由】接口，把【角色权限编码】内容专递给后端，从而获得当前登录的用户的权限树（路由树：菜单数据）。
+4. 前端把数据（可能需要进行重构），渲染到页面上即可。
+```
+
+1.2 按钮级权限控制
+
+```
+1. 在登录的时候，会请求【个人信息】接口，其中返回的数据中，有一个【权限信息】数据。
+2. 接着，我们写一个自定义指令文件，去判断：如果【权限信息】是（"*:*:*"）则代表是最高权限，无需判断任何内容了。
+3. 如果【权限信息】不是（"*:*:*"），那么就要判断，【权限信息】所有数据在自定义指令绑定的value值中，是否存在，如果不存在，那么就把对应的dom节点删除掉：父节点.removeChild(子节点)
+```
+
+1.3 删除节点：自定义指令
+
+自定义指令：
+
+```ts
+import {useUserStore} from '@store/useUserStore'
+
+export const AuthDirective = {
+  name:'auths',
+  mounted(el:any,binding:any) {
+    let permissions= useUserStore().permissions;
+    // 判断用户权限是否包含该权限
+    if(permissions.includes("*:*:*")) return
+    if(!permissions.includes(binding.value)){
+      const parent = el.parentElement;
+      parent && parent.removeChild(el);
+    }
+  },
+}
+```
+
+全局引入：
+
+```js
+//自定义指令
+import {AuthDirective} from './directives/auths.directives'
+app.directive(AuthDirective.name,AuthDirective);
+```
+
+使用：
+
+```
+v-auths="'auths'";//单引号里代表binding.value
+```
+
+# 九 修改用户/角色弹窗
+
+1. 使用接口获取用户/角色详情，获取到的`gender、enabled`是数字，要在弹窗里显示对应的值，需修改：
+
+   ![image-20240128215353850](./images/image-20240128215353850.png)
+
+   ![image-20240128215513054](./images/image-20240128215513054.png)

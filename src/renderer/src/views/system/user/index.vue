@@ -24,7 +24,7 @@
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="手机号码">
-                      <el-input placeholder="请输入手机号码" v-model="ruleForm.realName" />
+                      <el-input placeholder="请输入手机号码" v-model="ruleForm.phone" />
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
@@ -110,7 +110,7 @@
 <script lang="ts" setup>
 import { Search, Refresh, Plus, Edit, Delete } from '@element-plus/icons-vue'
 import { onBeforeMount, reactive, ref, getCurrentInstance, ComponentInternalInstance } from 'vue';
-import { userPage, userParams, Record, roleDelete } from '@api/systemUser'
+import { userPage, userParams, Record, userDelete } from '@api/systemUser'
 import userDialog from './userDialog.vue';
 import { ElMessageBox, ElMessage } from 'element-plus'
 //弹窗
@@ -162,12 +162,14 @@ const userReset = () => {
   getUserPage()
 }
 //新增事件 & 编辑
+const updateUserId = ref('')
 const btnUserDialog = (id) => {
   if (typeof id == 'string') {
-
+    updateUserId.value = id;
   } else {
-    dialogVisible.value = true;
+    updateUserId.value = '';
   }
+  dialogVisible.value = true;
 }
 //删除
 const deleteUser = async (id:string) => {
@@ -182,7 +184,7 @@ const deleteUser = async (id:string) => {
     }
   )
     .then(async () => {
-      let result = await roleDelete(id)
+      let result = await userDelete(id)
       if (result.code == '200') {
         getUserPage();
       }

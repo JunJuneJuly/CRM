@@ -79,6 +79,49 @@ export const userPage = (data:userParams):Promise<userResult> => {
 export const userAdd = (data:userInfo):Promise<userResponese> => {
   return http.post<userResponese>(`/system/user/add`,data)
 }
+interface IuserData{
+  id:string;
+  username:string;
+  realName:string;
+  userType:string;
+  email:string;
+  phone:string;
+  gender:string;
+  avatar:string;
+  enabled:string;
+  delFlag:string;
+  loginIp:number;
+  loginDate:number;
+  createBy:string;
+  createTime:number;
+  updateBy:string;
+  updateTime:number;
+  remark:string | null;
+}
+interface IUserGetData{
+  code:string;
+  msg:string;
+  data:{
+      roleIds:string[];
+      postIds:string[];
+      user:IuserData;
+  }
+}
+//查询角色
+export const userGet = (id:string)=>{
+  return http.get<IUserGetData>(`/system/user/get/${id}`)
+}
+//删除用户
+export const userDelete = (id:string):Promise<deleUser> => {
+  return http.get<deleUser>(`/system/user/delete/${id}`)
+}
+interface IUpdate extends userInfo{
+  id?:string;
+}
+//修改用户
+export const userUpdate = (data:IUpdate):Promise<deleUser> => {
+  return http.post<deleUser>(`/system/user/update`,data)
+}
 
 interface unitListRes{
   code: string;  

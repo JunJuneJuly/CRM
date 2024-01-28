@@ -26,7 +26,10 @@
           <el-col :span="12">
             <el-form-item label="性别">
               <el-select v-model="userForm.gender" placeholder="请选择用户性别" clearable>
-                <el-option v-for="item in dicts.system_global_gender" :key="item.v" :label="item.k" :value="item.v" />
+                <el-option 
+                  v-for="item in dicts.system_global_gender" 
+                  :key="item.v" 
+                  :label="item.k" :value="item.v == userForm.gender ? userForm.gender : item.v" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -38,7 +41,7 @@
           <el-col :span="12">
             <el-form-item label="启用状态">
               <el-radio-group v-model="userForm.enabled" class="ml-4">
-                <el-radio v-for="item in dicts.system_global_status" :key="item.id" :label="item.v">{{ item.k
+                <el-radio v-for="item in dicts.system_global_status" :key="item.id" :label="item.v==userForm.enabled ? userForm.enabled : item.v">{{ item.k
                 }}</el-radio>
               </el-radio-group>
             </el-form-item>
@@ -85,7 +88,7 @@
 </template>
 <script lang="ts" setup>
 import { onBeforeMount, reactive, ref, ComponentInternalInstance, getCurrentInstance } from 'vue'
-import { userInfo, userAdd, unitList, unit, postList, post, role, roleList } from '@api/systemUser'
+import { userInfo, userAdd,userGet, unitList, unit, postList, post, role, roleList,userUpdate } from '@api/systemUser'
 //所属机构
 const unitTree = ref<unit[]>([])
 //所属岗位
@@ -98,6 +101,15 @@ onBeforeMount(async () => {
   if (proxy) {
     (proxy as any).getDicts(['system_global_status', 'system_global_gender']);
   }
+  //编辑获取详情
+  if(updateUserId.value != ''){
+    let updateData = await userGet(updateUserId.value);
+    let {postIds,roleIds,user} = updateData.data;
+    Object.assign(userForm,user)
+    userForm.postIds = postIds;
+    userForm.roleIds = roleIds;
+    console.log(userForm);
+  }
   //所属机构
   let unitRes = await unitList();
   unitTree.value = unitRes.data;
@@ -107,6 +119,7 @@ onBeforeMount(async () => {
   //分配角色
   let roleRes = await roleList();
   roleTree.value = roleRes.data.records;
+
 
 })
 //添加用户表单
@@ -144,7 +157,7 @@ const onSubmit = async () => {
   if (props.updateUserId == '') {
     await add()
   } else {
-
+    await update()
   }
   close();
   emit('userChange')
@@ -153,5 +166,8 @@ const onSubmit = async () => {
 const add = async () => {
   await userAdd(userForm);
 }
-
+//修改用户
+const update = async () => {
+  await userUpdate(userForm);
+}
 </script>

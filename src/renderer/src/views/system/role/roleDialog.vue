@@ -10,7 +10,12 @@
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="roleForm.enabled" class="ml-4">
-            <el-radio v-for="item in dicts.system_global_status" :key="item.id" :label="item.v">{{ item.k }}</el-radio>
+            <el-radio 
+              v-for="item in dicts.system_global_status" 
+              :key="item.id" 
+              :label="item.v == roleForm.enabled ? roleForm.enabled:item.v">
+              {{ item.k }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
 
@@ -45,6 +50,7 @@
 import { ref, reactive, getCurrentInstance, ComponentInternalInstance, onBeforeMount } from 'vue';
 import { IRoleMenuItem, menuTree, roleAdd, roleGet, roleUpdate } from '@api/role.ts';
 import { ElTree } from 'element-plus'
+import normalizeMenuList from './normalizeMenuList.ts';
 let props = defineProps({
   dialogVisible: {
     type: Boolean,
@@ -109,8 +115,14 @@ onBeforeMount(async () => {
     (proxy as any).getDicts(['system_global_status'])
   }
   //获取菜单权限
-  let res = await menuTree()
-  permission.treeList = res.data;
+  let res = await menuTree({
+    current:'1',
+    size:'999',
+    enabled:'1',
+  })
+  let {records} = res.data
+  // console.log(res.data)
+  permission.treeList = normalizeMenuList(records);
   //修改角色：先获取角色详情
   if (updateRoleId.value != '') {
     let res = await roleGet(updateRoleId.value)
