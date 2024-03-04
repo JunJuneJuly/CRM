@@ -68,15 +68,15 @@ const close = () => {
   dialogVisible.value = false;
   emit('update:dialogVisible', false)
 }
-const update = async () => {
-  await roleUpdate({
+const update = () => {
+  return roleUpdate({
     id: updateRoleId.value,
     permissionIds: treeRef.value!.getCheckedKeys() as string[],
     ...roleForm,
   })
 }
-const add = async () => {
-  await roleAdd({
+const add = () => {
+  return roleAdd({
     permissionIds: treeRef.value!.getCheckedKeys() as string[],
     ...roleForm,
   })

@@ -163,11 +163,11 @@ const onSubmit = async () => {
   emit('userChange')
 }
 //添加用户
-const add = async () => {
-  await userAdd(userForm);
+const add = () => {
+  return userAdd(userForm);
 }
 //修改用户
-const update = async () => {
-  await userUpdate(userForm);
+const update = () => {
+  return userUpdate(userForm);
 }
 </script>

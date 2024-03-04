@@ -78,7 +78,9 @@ const pmenu = ref({})
 const subMenu = ref([])
 const route = useRoute()
 onBeforeMount(() => {
-  // electron.ipcRenderer.invoke('window-resize');
+  window.electron.ipcRenderer.invoke('renderer-to-main', {
+    name: 'resize-window',
+  })
   menu.value = useMenuStore().menu
   routesPath();
 })

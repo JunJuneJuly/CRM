@@ -1,87 +1,11 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import { app, BrowserWindow, ipcMain } from 'electron'
+import { electronApp, optimizer } from '@electron-toolkit/utils'
 
-function createWindow(): void {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
-    show: false,
-    // titleBarStyle:'hidden',
-    frame: false,//无边框窗口
-    // resizable:false,
-    autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
-  })
+import MainFrame from './frame/MainFrame'
+import routers from './router/router.template'
+import EventRouter from './router/EventRouter'
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
-  })
 
-  //登录页跳转到首页, 进行窗口设置
-  ipcMain.handle('window-resize',()=>{
-    mainWindow.setSize(1200,720);//设置窗口大小
-    mainWindow.setMinimumSize(1000,500);//设置窗口最小值
-    mainWindow.center();//窗口居中
-    mainWindow.setResizable(true);//窗口可调节大小
-  })
-
-  //接收窗口拖拽事件：
-  ipcMain.handle('custom-adsorption',(event,res)=>{
-    let x = res.appX;
-    let y = res.appY;
-    mainWindow.setPosition(x,y)
-  })
-
-  //窗口关闭
-  ipcMain.handle('closeWindow',()=>{
-    mainWindow.close();
-  })
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
-
-  //退出登录，还原窗口 
-  ipcMain.handle('out-login',()=>{
-    mainWindow.setSize(900,670);//设置窗口大小
-    mainWindow.center();//窗口居中
-    mainWindow.setResizable(false);//窗口可调节大小
-  })
-
-  //退出应用
-  ipcMain.handle('win-close',()=>{
-    app.exit()
-  })
-
-  //最小化
-  ipcMain.handle('win-min',()=>{
-    mainWindow.minimize()
-  })
-  //最大化
-  ipcMain.handle('win-max',()=>{
-    //需要判断当前是否已经是全屏状态
-    if(mainWindow.isFullScreen()){
-      mainWindow.setFullScreen(false)
-    }else{
-      mainWindow.setFullScreen(true)
-    }
-  })
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-  }
-  mainWindow.webContents.openDevTools() // 打开调试工具
-}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -97,7 +21,19 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  createWindow()
+  let eventRouter = new EventRouter()
+  let mainWindow = new MainFrame()
+  mainWindow.create();
+  
+  eventRouter.addApi('mainWindow',mainWindow);
+  eventRouter.addApi('app',app);
+  eventRouter.addRouters(routers);
+
+  //渲染进程向主进程通信
+  ipcMain.handle('renderer-to-main',(e,data)=>{
+    eventRouter.router(data)
+  })
+
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

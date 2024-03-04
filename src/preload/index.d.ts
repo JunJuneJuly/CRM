@@ -4,6 +4,6 @@ declare global {
   interface Window {
     electron: ElectronAPI
     api: unknown,
-    
+    ipcRenderer:ElectronAPI.ipcRenderer
   }
 }

@@ -131,7 +131,10 @@ const mousedown = (event) => {
         appX: x,
         appY: y
       }
-      // electron.ipcRenderer.invoke('custom-adsorption', data)
+      window.electron.ipcRenderer.invoke('renderer-to-main',{
+        name:'custom-adsorption',
+        data
+      })
     }
   })
   document.addEventListener('mouseup', () => {
@@ -139,7 +142,9 @@ const mousedown = (event) => {
   })
 }
 const closeWin = () => {
-  // electron.ipcRenderer.invoke('closeWindow')
+  window.electron.ipcRenderer.invoke('renderer-to-main',{
+    name:'close-login'
+  })
 }
 </script>
 <style lang="scss" scoped>

@@ -76,7 +76,9 @@ const outLogin = () => {
       router.replace({
         path: '/'
       })
-      electron.ipcRenderer.invoke('out-login');
+      window.electron.ipcRenderer.invoke('renderer-to-main',{
+        name:'out-login'
+      })
     })
     .catch(() => {
       ElMessage({
@@ -97,7 +99,9 @@ const winClose = () => {
     }
   )
     .then(() => {
-      electron.ipcRenderer.invoke('win-close');
+      window.electron.ipcRenderer.invoke('renderer-to-main',{
+        name:'win-close'
+      })
     })
     .catch(() => {
       ElMessage({
@@ -108,11 +112,15 @@ const winClose = () => {
 }
 //最小化
 const minWin = () => {
-  electron.ipcRenderer.invoke('win-min');
+  window.electron.ipcRenderer.invoke('renderer-to-main',{
+    name:'min-win'
+  })
 }
 //最大化
 const maxWin = () => {
-  electron.ipcRenderer.invoke('win-max');
+  window.electron.ipcRenderer.invoke('renderer-to-main',{
+    name:'max-win'
+  })
 }
 </script>
 <style lang="scss" scoped>
