@@ -16,9 +16,7 @@ export default class EventRouter {
   router(data){
     for(let i=0;i<this.routers.length;i++){
       let r = this.routers[i];
-      console.log(this.routers)
       if(r.name == data.name && r.callback){
-        console.log(this.#api,'api')
         r.callback(this.#api,data);
       }
     }

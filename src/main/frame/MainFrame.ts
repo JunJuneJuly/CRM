@@ -72,7 +72,7 @@ export default class MainFrame{
     return this.#frame.isFullScreen();
   }
   //放大 & 缩小
-  serFullScreen(bool){
+  setFullScreen(bool){
     this.#frame.setFullScreen(bool);
   }
 } 

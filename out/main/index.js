@@ -74,7 +74,7 @@ class MainFrame {
     return this.#frame.isFullScreen();
   }
   //放大 & 缩小
-  serFullScreen(bool) {
+  setFullScreen(bool) {
     this.#frame.setFullScreen(bool);
   }
 }
@@ -97,6 +97,7 @@ routers.push(new EventRoute("min-win", (api, data) => {
   api.mainWindow.minimize();
 }));
 routers.push(new EventRoute("max-win", (api, data) => {
+  console.log(api.mainWindow, "api");
   if (api.mainWindow.isFullScreen()) {
     api.mainWindow.setFullScreen(false);
   } else {
@@ -135,9 +136,7 @@ class EventRouter {
   router(data) {
     for (let i = 0; i < this.routers.length; i++) {
       let r = this.routers[i];
-      console.log(this.routers);
       if (r.name == data.name && r.callback) {
-        console.log(this.#api, "api");
         r.callback(this.#api, data);
       }
     }
@@ -155,6 +154,7 @@ electron.app.whenReady().then(() => {
   eventRouter.addApi("app", electron.app);
   eventRouter.addRouters(routers);
   electron.ipcMain.handle("renderer-to-main", (e, data) => {
+    console.log(data);
     eventRouter.router(data);
   });
   electron.app.on("activate", function() {

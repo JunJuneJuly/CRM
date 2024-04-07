@@ -4,6 +4,7 @@ import { electronApp, optimizer } from '@electron-toolkit/utils'
 import MainFrame from './frame/MainFrame'
 import routers from './router/router.template'
 import EventRouter from './router/EventRouter'
+import { da } from 'element-plus/es/locale'
 
 
 
@@ -31,6 +32,7 @@ app.whenReady().then(() => {
 
   //渲染进程向主进程通信
   ipcMain.handle('renderer-to-main',(e,data)=>{
+    console.log(data)
     eventRouter.router(data)
   })
 
