@@ -2,7 +2,7 @@
   <section class="aminui-wrapper">
     <!-- 左侧 一级菜单-->
     <div class="aminui-side-split">
-      <div class="aminui-side-split-top">
+      <div class="aminui-side-split-top" @mousedown="handleMouseDown">
         <router-link to="/">
           <img src="../assets/images/logo-r.png" alt="" />
         </router-link>
@@ -32,7 +32,7 @@
     </div>
     <!-- 中间 二级菜单-->
     <div :class="menuIsCollapse ? 'aminui-side isCollapse' : 'aminui-side'">
-      <div class="aminui-side-top" v-if="!menuIsCollapse">
+      <div class="aminui-side-top" v-if="!menuIsCollapse" @mousedown="handleMouseDown">
         <h2>首页</h2>
       </div>
       <div class="aminui-side-scroll">
@@ -72,6 +72,8 @@ import TagBar from './components/TagBar.vue'
 import { useRoute } from 'vue-router'
 import { Parent } from '@interface/user'
 
+import useWindowDrag from '@hooks/useMouseDown'
+let { handleMouseDown } = useWindowDrag()
 
 const menu = ref([])
 const pmenu = ref({})
@@ -123,7 +125,7 @@ const toggle_menuIsCollapse = () => {
 
     .aminui-side-split-top {
       height: 49px;
-      -webkit-app-region: drag;
+      // -webkit-app-region: drag;
 
       a {
         display: inline-block;
@@ -190,7 +192,7 @@ const toggle_menuIsCollapse = () => {
     border-right: 1px solid #e6e6e6;
 
     .aminui-side-top {
-      -webkit-app-region: drag;
+      // -webkit-app-region: drag;
       border-bottom: 1px solid #ebeef5;
       height: 49px;
       line-height: 50px;

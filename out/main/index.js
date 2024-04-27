@@ -15,7 +15,7 @@ class MainFrame {
       // titleBarStyle:'hidden',
       frame: false,
       //无边框窗口
-      // resizable:false,
+      resizable: false,
       autoHideMenuBar: true,
       ...process.platform === "linux" ? { icon } : {},
       webPreferences: {
@@ -97,7 +97,6 @@ routers.push(new EventRoute("min-win", (api, data) => {
   api.mainWindow.minimize();
 }));
 routers.push(new EventRoute("max-win", (api, data) => {
-  console.log(api.mainWindow, "api");
   if (api.mainWindow.isFullScreen()) {
     api.mainWindow.setFullScreen(false);
   } else {

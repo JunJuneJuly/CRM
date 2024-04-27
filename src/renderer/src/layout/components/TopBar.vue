@@ -17,7 +17,7 @@
       </el-breadcrumb>
     </div>
     <!-- 中间 -->
-    <div class="center-panel"></div>
+    <div class="center-panel" @mousedown="handleMouseDown"></div>
     <!-- 右边 -->
     <div class="right-panel">
       <slot></slot>
@@ -29,6 +29,9 @@ import { ArrowRight } from '@element-plus/icons-vue'
 import { useRoute } from 'vue-router'
 import { onBeforeMount, ref, watch } from 'vue'
 import { Parent } from '@interface/user'
+
+import useWindowDrag from '@hooks/useMouseDown'
+let { handleMouseDown } = useWindowDrag()
 
 const route = useRoute();
 const breadCrumbList = ref<Parent[]>([])
@@ -59,7 +62,7 @@ watch(route, () => {
 
   .center-panel {
     flex: 1;
-    -webkit-app-region: drag;
+    // -webkit-app-region: drag;
   }
 
   .right-panel {

@@ -1,5 +1,5 @@
 <template>
-  <div class="login" @mousedown="mousedown">
+  <div class="login" @mousedown="handleMouseDown">
     <!-- 按钮 -->
     <div class="login-config">
       <div class="login-config-btn">
@@ -81,6 +81,9 @@ import passwordForm from '@components/login/passwordForm.vue'
 import phoneForm from '@components/login/phoneForm.vue'
 import { Close, Moon, Sunny, Refresh } from '@element-plus/icons-vue'
 import { reactive, ref, getCurrentInstance, ComponentInternalInstance } from 'vue'
+import useWindowDrag from '@hooks/useMouseDown'
+
+let { handleMouseDown } = useWindowDrag()
 
 //切换语言
 const config = reactive({
@@ -116,31 +119,6 @@ const configDark = () => {
   }
 }
 
-let dragging = ref<boolean>(false)
-let mouseX = ref<number>(0)
-let mouseY = ref<number>(0)
-const mousedown = (event) => {
-  dragging.value = true;
-  mouseX.value = event.x;
-  mouseY.value = event.y;
-  document.addEventListener('mousemove', (e) => {
-    if (dragging.value) {
-      let x = e.screenX - mouseX.value;
-      let y = e.screenY - mouseY.value;
-      let data = {
-        appX: x,
-        appY: y
-      }
-      window.electron.ipcRenderer.invoke('renderer-to-main',{
-        name:'custom-adsorption',
-        data
-      })
-    }
-  })
-  document.addEventListener('mouseup', () => {
-    dragging.value = false;
-  })
-}
 const closeWin = () => {
   window.electron.ipcRenderer.invoke('renderer-to-main',{
     name:'close-login'

@@ -13,7 +13,7 @@ export default class MainFrame{
       show: false,
       // titleBarStyle:'hidden',
       frame: false,//无边框窗口
-      // resizable:false,
+      resizable:false,
       autoHideMenuBar: true,
       ...(process.platform === 'linux' ? { icon } : {}),
       webPreferences: {

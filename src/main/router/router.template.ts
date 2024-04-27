@@ -17,7 +17,6 @@ routers.push(new EventRoute("min-win", (api,data) => {
 }))
 //最大化
 routers.push(new EventRoute("max-win", (api,data) => {
-  console.log(api.mainWindow,'api')
   if(api.mainWindow.isFullScreen()){
     api.mainWindow.setFullScreen(false);
   }else{

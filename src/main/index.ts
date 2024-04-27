@@ -32,7 +32,6 @@ app.whenReady().then(() => {
 
   //渲染进程向主进程通信
   ipcMain.handle('renderer-to-main',(e,data)=>{
-    console.log(data)
     eventRouter.router(data)
   })
 
